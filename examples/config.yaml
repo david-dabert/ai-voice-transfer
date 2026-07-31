@@ -1,0 +1,119 @@
+# AI Voice Transfer Configuration
+# Copy this file and customize for your voice.
+
+pipeline:
+  name: "my_voice"
+  max_iterations: 2  # retry count for generation loop
+
+# Voice corpus: paths to text files containing your writing samples
+corpus:
+  name: "My Voice"
+  description: "Writing samples from emails, essays, and reports"
+  sample_files:
+    - "samples/email_01.txt"
+    - "samples/email_02.txt"
+    - "samples/essay_01.txt"
+    - "samples/report_01.txt"
+  # Alternatively, inline samples:
+  # inline_samples:
+  #   - "First sample text goes here..."
+  #   - "Second sample text goes here..."
+
+# Register library: define your distinct voice modes
+registers:
+  - name: "professional_email"
+    description: "Formal correspondence with clients and institutions"
+    formality: "FORMAL_PROFESSIONAL"
+    recipient_classes:
+      - "client"
+      - "manager"
+      - "institution"
+    forbidden_words:
+      - "hey"
+      - "gonna"
+      - "awesome"
+    forbidden_punctuation:
+      - "!"
+    forbidden_openings:
+      - "Hey"
+      - "Hi there"
+      - "So,"
+    max_sentence_length: 45
+
+  - name: "personal_message"
+    description: "Warm direct communication with friends and family"
+    formality: "CASUAL"
+    recipient_classes:
+      - "friend"
+      - "family"
+    forbidden_punctuation:
+      - ";"  # no semicolons in casual writing
+    vocabulary_notes: "Plain, direct, warm. Short words."
+
+  - name: "analytical_essay"
+    description: "Long-form analytical writing for publication"
+    formality: "FORMAL_PROFESSIONAL"
+    recipient_classes:
+      - "reader"
+      - "publication"
+    preferred_punctuation:
+      - ";"
+      - ":"
+    min_sentence_length: 6
+    vocabulary_notes: "Latinate register permitted. Precision over simplicity."
+
+  - name: "social_media"
+    description: "Public posts on LinkedIn and similar platforms"
+    formality: "INFORMAL_PROFESSIONAL"
+    recipient_classes:
+      - "public"
+      - "linkedin"
+    forbidden_openings:
+      - "Excited to announce"
+      - "Thrilled to share"
+      - "I'm honored"
+    forbidden_closings:
+      - "Thoughts?"
+      - "What do you think?"
+      - "Agree?"
+
+# Lexicon brand: prescriptive voice rules
+lexicon_brand:
+  name: "my_brand"
+  use_defaults: true  # load the 15 default modules
+  # Override specific modules:
+  custom_forbidden_words:
+    - "delve"
+    - "leverage"
+    - "robust"
+    - "holistic"
+    - "nuanced"
+    - "foster"
+    - "navigate"
+  custom_forbidden_structures:
+    - "sits at an intersection"
+    - "Here is what makes this different"
+
+# Fingerprint detector: custom patterns to add
+custom_fingerprints:
+  - name: "my_custom_tic"
+    pattern: "\\bsynergy\\b"
+    severity: 0.7
+    fix: "Replace 'synergy' with a concrete description."
+    description: "Corporate jargon fingerprint"
+    is_regex: true
+
+# Scorer weights (higher = more important in overall score)
+scorer_weights:
+  vocabulary: 1.0
+  structure: 1.0
+  punctuation: 0.8
+  fingerprints: 1.5
+  lexicon_brand: 1.2
+
+# Output preferences
+output:
+  show_constraints: true  # print the constraint prompt
+  show_profile_summary: true  # print the extracted profile
+  show_validation_report: true  # print the validation report
+  verbose: false  # print detailed module-by-module results
